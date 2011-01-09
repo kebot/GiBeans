@@ -1,6 +1,25 @@
 <?php defined('SYSPATH') or die('No direct script access.');
+$environments = array(
+    'development' => array(
+        'baseurl' => 'http://localhost/kohana/',
+        
+    ),
+    'production'     => array(
+        'baseurl' => '/',
+    ),
+);
 
-//-- Environment setup --------------------------------------------------------
+if( $_SERVER['SERVER_NAME'] !== 'localhost')
+{
+    Kohana::$environment = 'production';
+    $environment = $environments['production'];
+} else 
+{
+    $environment = $environments['development'];
+}
+
+unset ($environments);
+
 
 /**
  * Set the default time zone.
@@ -8,7 +27,7 @@
  * @see  http://kohanaframework.org/guide/using.configuration
  * @see  http://php.net/timezones
  */
-date_default_timezone_set('America/Chicago');
+date_default_timezone_set('Asia/Shanghai');
 
 /**
  * Set the default locale.
@@ -16,7 +35,7 @@ date_default_timezone_set('America/Chicago');
  * @see  http://kohanaframework.org/guide/using.configuration
  * @see  http://php.net/setlocale
  */
-setlocale(LC_ALL, 'en_US.utf-8');
+setlocale(LC_ALL, 'zh_CN.utf-8');
 
 /**
  * Enable the Kohana auto-loader.
@@ -37,14 +56,6 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
 //-- Configuration and initialization -----------------------------------------
 
 /**
- * Set Kohana::$environment if a 'KOHANA_ENV' environment variable has been supplied.
- */
-if (getenv('KOHANA_ENV') !== FALSE)
-{
-	Kohana::$environment = getenv('KOHANA_ENV');
-}
-
-/**
  * Initialize Kohana, setting the default options.
  *
  * The following options are available:
@@ -58,7 +69,7 @@ if (getenv('KOHANA_ENV') !== FALSE)
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-	'base_url'   => '/',
+	'base_url'   => $environment['baseurl'],
 ));
 
 /**
@@ -76,22 +87,25 @@ Kohana::$config->attach(new Kohana_Config_File);
  */
 Kohana::modules(array(
 	// 'auth'       => MODPATH.'auth',       // Basic authentication
-	// 'cache'      => MODPATH.'cache',      // Caching with multiple backends
+	   'cache'      => MODPATH.'cache',      // Caching with multiple backends
 	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
-	// 'database'   => MODPATH.'database',   // Database access
+	   'database'   => MODPATH.'database',   // Database access
+	   'douban'    => MODPATH.'douban',
 	// 'image'      => MODPATH.'image',      // Image manipulation
-	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
+	//   'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'oauth'      => MODPATH.'oauth',      // OAuth authentication
 	// 'pagination' => MODPATH.'pagination', // Paging of results
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
-	// 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
+	//   'userguide'  => MODPATH.'userguide',  // User guide and API documentation
+        //   'shindig'   => MODPATH.'shindig',    // Shindig Blogging
+         //   'sprig'      => MODPATH.'sprig',     // Sprig modeling system
 	));
 
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
-Route::set('default', '(<controller>(/<action>(/<id>)))')
+Route::set('default', '(<controller>(/<action>(/<id>(/<move>))))')
 	->defaults(array(
 		'controller' => 'welcome',
 		'action'     => 'index',
