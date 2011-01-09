@@ -31,3 +31,9 @@
 [submodule "modules/oauth"]
 	path = modules/oauth
 	url = git://github.com/kohana/oauth.git
+[submodule "modules/douban"]
+	path = modules/douban
+	url = git://github.com/icyleaf/douban.git
+[submodule "blueprint"]
+	path = blueprint
+	url = git://github.com/joshuaclayton/blueprint-css.git
