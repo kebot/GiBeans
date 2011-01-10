@@ -17,12 +17,15 @@ class Controller_Book extends Controller {
     /**
      * @var int
      */
-    protected $book_id;
+    protected $book_id=NULL;
 
     public function  before() {
         $this->user = new User();
+        // @todo debug
         $this->book_id = $this->request->param('id',NULL);
-        $this->client = new Base_Book($this->book_id);
+        if($this->book_id){
+            $this->client = new Base_Book($this->book_id);
+        }
     }
     /**
      *
@@ -38,12 +41,16 @@ class Controller_Book extends Controller {
 
     public function action_index()
     {
+        
+        
         $this->request->response = 'index.here';
     }
 
     public function action_subject()
     {
         $book_info = $this->client->infos();
+        
+        
 
         $upload_url = URL::site('book/upload/'.$this->book_id,true);
         
@@ -70,15 +77,38 @@ class Controller_Book extends Controller {
         
         if(isset($_FILES['book'])){
             $uid = $this->user->getUid();
-
-            //@todo remove debug
+            
+            //@todo remove this FOR DEBUG
             $uid = 1;
+            
+            if($uid<0){
+                $this->request->response = __('Not Login,Can not upload file');
+                return;
+            }
+            
 
+            $infos = $this->client->infos();
+            
             $upload = Upload_Book::upload($_FILES, $this->client->infos(), $uid);
+            
+            // Update the tags from douban
+            if(!$infos->files){
+                Upload_Book::insertTags($infos);
+            }
+            
+            if($upload == -1){
+                $message = __('File Exists');
+            } elseif($upload == -2) {
+                $message = __('Wrong File Type');
+            } elseif($upload == -3){
+                $message = __('Unknow Error');
+            } else {
+                $message = __('Upload Success');
+            }
             
             Cache::instance('book')->delete($this->book_id);
             
-            $this->request->response = "1";
+            $this->request->response = $message;
         } else {
             $url = URL::site($this->request->uri);
             $max = 30000000;
@@ -98,17 +128,27 @@ class Controller_Book extends Controller {
         if(!is_numeric($fileid)){
             $this->request->response = __('no fileid.');
         }
+        
         $file = new Upload_Book($fileid);
+        
+        Base_Download::add($fileid, $this->user->getUid());
+        
         if($file->douban_id == $this->book_id){
             $this->request->send_file($file->path,$this->client->infos()->title.'.'.$file->ext);
         }
     }
     
+    /**
+     * @todo remove debug
+     */
     public function action_debug()
     {
-        $book = new Upload_Book(4);
-        var_dump($book);
-        
+        //$book = new Upload_Book(4);
+        //var_dump($this->client);
+        //Upload_Book::insertTags($this->client->infos());
+        //print_r( Base_Tags::add('ddd') );
+        //$infos = $this->client->infos();
+        Base_Download::add(1, 2);
     }
     
 }

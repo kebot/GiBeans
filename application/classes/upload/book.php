@@ -1,6 +1,4 @@
-<?php
-
-defined('SYSPATH') or die('No direct script access.');
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
  * Description of book
@@ -18,32 +16,70 @@ class Upload_Book {
      * @var array
      */
     protected static $allowed = array(
-        'txt', 'pdf', 'chm'
+        'txt', 'pdf', 'chm' 
     );
 
     /**
-     *
-     * @param <type> $files
+     * do upload
+     * @param array $files
+     * @param StdClass $book_info
+     * @param int $uid
+     * @return success the upload file; int -1 - file alread exists ; -2 - Wrong file type -3 Unknow Error
      */
     public static function upload($files, $book_info, $uid) {
-        // set the default file directory
+        // set the key for upload file array
         $file_key = 'book';
-
+        
         if (isset($files[$file_key])) {
             $file = $files[$file_key];
+            // valid the file type
             $isValid = Upload::valid($file) && Upload::type($file, self::$allowed);
             if ($isValid) {
                 $ext = self::_getExt($file['name']);
                 $filename = self::_makeFilename($file);
+                if(self::isFileExists($filename)){
+                    return -1;
+                }
                 $path = Upload::save($file, $filename);
                 // save in database
-                $columns = array('title', 'path', 'owner', 'time', 'size', 'douban_id', 'ext');
+                $columns = array('title', 'sha1', 'owner', 'time', 'size', 'douban_id', 'ext');
                 $values = array($book_info->title, $filename, $uid, DB::expr('NOW()'), $file['size'], $book_info->id, $ext);
                 $id = DB::insert('books', $columns)->values($values)->execute('base');
+                
                 if ($id) {
                     return $id;
+                } else {
+                    return -3;
                 }
+            } else {
+                return -2;
             }
+        }
+    }
+    /**
+     * @todo unfinished 
+     * @uses Base_Tags
+     */
+    public static function insertTags($infos)
+    {
+        foreach($infos->tags as $tag=>$value){
+            $tag = Base_Tags::get($tag)->link($infos->id);
+        }
+    }
+
+    /**
+     * 
+     * @param string $sha1
+     * @return boolean
+     */
+    public static function isFileExists($sha1)
+    {
+        $count = DB::select()->from('books')->where('sha1', '=', $sha1)->execute('base')->count();
+        if($count >= 1)
+        {
+            return TRUE;
+        } else {
+            return FALSE;
         }
     }
 
@@ -55,7 +91,7 @@ class Upload_Book {
     }
 
     protected static function _makeFilename($file) {
-        return sha1_file($file['tmp_name']) . $file['name'];
+        return sha1_file($file['tmp_name']);
     }
 
     protected static function _getExt($filename) {

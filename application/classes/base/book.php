@@ -52,7 +52,6 @@ class Base_Book extends Douban_API_Book {
     }
 
     /**
-     *
      * @return Boolean
      */
     public function removeCache()
