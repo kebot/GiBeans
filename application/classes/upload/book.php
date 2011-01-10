@@ -82,7 +82,12 @@ class Upload_Book {
             return FALSE;
         }
     }
-
+    
+    /**
+     *
+     * @param Database_Result $handle
+     * @return Upload_Book
+     */
     public static function get($handle) {
         $bk = new self();
         $bk->id = $handle->get('id');
@@ -156,6 +161,16 @@ class Upload_Book {
         $this->size = $handle->get('size');
         $this->ext = $handle->get('ext');
         $this->download_url = URL::site('book/download/'.$this->douban_id).'?file='.$this->id;
+    }
+    /**
+     *
+     * @param int $id
+     * @return Base_Book 
+     */
+    public function book(){
+        if($this->douban_id){
+            return new Base_Book($this->douban_id);
+        }
     }
 }
 

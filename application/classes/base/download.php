@@ -20,11 +20,10 @@ class Base_Download {
         }
     }
     
-    public static function count($people,$max=100,$page=1)
+    public static function count($people)
     {
         
     }
-    
     
 }
 

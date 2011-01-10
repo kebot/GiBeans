@@ -1,6 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Book extends Controller {
+class Controller_Book extends Controller_Template {
+    
+    public $template = 'base/main';
+
 
     /**
      *
@@ -20,19 +23,32 @@ class Controller_Book extends Controller {
     protected $book_id=NULL;
 
     public function  before() {
+        parent::before();
+        
         $this->user = new User();
         // @todo debug
         $this->book_id = $this->request->param('id',NULL);
         if($this->book_id){
             $this->client = new Base_Book($this->book_id);
         }
+        
+        
+        
+        // template
+        $this->template->title = '精弘阅读';
+        $this->template->header = View::factory('base/header')->render();
+        $this->template->content = '';
+        $this->template->footer = '';
+        
+        
+        
     }
     /**
      *
      *
      * @todo don't use $_GET array and add pages
      */
-    public function action_search()
+    public function action_searchclient()
     {
         $q = Validate::not_empty($_GET['q']);
         $result = $this->client->search($q);
@@ -41,32 +57,69 @@ class Controller_Book extends Controller {
 
     public function action_index()
     {
-        
-        
+        /*
+        $files = DB::select()->from('books')->order_by('time', 'DESC')->limit(30)->execute('base');
+        while ($files->valid()){
+            $file = Upload_Book::get($files);
+            
+            $info = $file->book()->infos();
+            print $info->title . '<br>';
+            print HTML::image($info->link['image']) . '<br>';
+            
+            $files->next();
+        }
+         **/
+         
         $this->request->response = 'index.here';
     }
-
+    
+    public function action_search()
+    {
+        $limit = 10;
+        $get = $_GET;
+        foreach (array('title','ext','order','direction','page') as $key){
+            $$key = Arr::get($get, $key);
+        }
+        $handle = DB::select()->from('books')->where('title', 'LIKE', '%'.$title.'%')->limit($limit);
+        $ext AND $handle->and_where('ext', '=', $ext);
+        
+        $order AND $handle->order_by($order, $direction);
+        
+        $page AND $handle->offset($limit*($page-1));
+        
+        $handle = $handle->execute('base');
+       
+        while ($handle->valid()){
+            $view = View::factory('base/search/local');
+            $file = Upload_Book::get($handle);
+            $infos = $file->book()->infos();
+            
+            $view->file = $file;
+            $view->book = $infos;
+            
+            $this->template->content .= $view->render();
+            $handle->next();
+        }
+        
+        
+    }
+    
     public function action_subject()
     {
         $book_info = $this->client->infos();
         
-        
-
         $upload_url = URL::site('book/upload/'.$this->book_id,true);
         
         View::bind_global('upload_url', $upload_url);
         View::bind_global('i', $book_info);
         
-        $other = View::factory('base/book/relates')->render();
         $max = 30000000;
-        $other.= View::factory('base/upload')->bind('action',$upload_url)->bind('max_file_size',$max )->render();
-        $this->request->response = View::factory('base/item')
-                ->bind('other',$other)
-                ->render();
+        $upload = View::factory('base/upload')->bind('action',$upload_url)->bind('max_file_size',$max )->render();
+        $this->template->content = View::factory('base/item')
+                ->render() . $upload;
         
         //@todo remove debug
-        $this->client->removeCache();
-
+        //$this->client->removeCache();
     }
 
     public function action_upload()
@@ -144,7 +197,7 @@ class Controller_Book extends Controller {
     public function action_debug()
     {
         //$book = new Upload_Book(4);
-        //var_dump($this->client);
+        var_dump($this->client);
         //Upload_Book::insertTags($this->client->infos());
         //print_r( Base_Tags::add('ddd') );
         //$infos = $this->client->infos();
