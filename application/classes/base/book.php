@@ -32,6 +32,7 @@ class Base_Book extends Douban_API_Book {
     public  function  get($book_id) {
         if(!$this->cache->get($book_id)){
             $book = parent::get($book_id);
+            $book->link['largeimage']=str_replace('spic','lpic',$book->link['image']);
             $book->files = $this->_getFiles();
             if($book){
                 $this->cache->set($book_id, $book);
@@ -44,7 +45,7 @@ class Base_Book extends Douban_API_Book {
         $files = array();
         $books = DB::select()->from('books')->where('douban_id','=',  $this->id)->execute('base');
         while($books->valid()){
-            $files[] = Model_Base_Upload_Book::get($books);
+            $files[] = Upload_Book::get($books);
             $books->next();
         }
         return $files;

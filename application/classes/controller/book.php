@@ -51,13 +51,14 @@ class Controller_Book extends Controller {
         View::bind_global('i', $book_info);
         
         $other = View::factory('base/book/relates')->render();
-        
+        $max = 30000000;
+        $other.= View::factory('base/upload')->bind('action',$upload_url)->bind('max_file_size',$max )->render();
         $this->request->response = View::factory('base/item')
                 ->bind('other',$other)
                 ->render();
         
         //@todo remove debug
-        $this->client->debug();
+        $this->client->removeCache();
 
     }
 
@@ -73,7 +74,9 @@ class Controller_Book extends Controller {
             //@todo remove debug
             $uid = 1;
 
-            $upload = Model_Base_Upload_Book::upload($_FILES, $this->client->infos(), $uid);
+            $upload = Upload_Book::upload($_FILES, $this->client->infos(), $uid);
+            
+            Cache::instance('book')->delete($this->book_id);
             
             $this->request->response = "1";
         } else {
@@ -82,19 +85,31 @@ class Controller_Book extends Controller {
 //            print $url;
 //            return;
 
-            $this->request->response = View::factory('base/item/upload')->bind('action',$url)->bind('max_file_size', $max)->render();
+            $this->request->response = View::factory('base/upload')->bind('action',$url)->bind('max_file_size', $max)->render();
         }
     }
 
-    public function action_down()
+    public function action_download()
     {
+        /*
         $path = APPPATH . 'upload' . DIRECTORY_SEPARATOR . 'book' . DIRECTORY_SEPARATOR . '686de452126181ebc16ca62ba45f8d17aa6e7314使用Subversion进行版本控制.chm';
-        $this->request->response = $this->request->uri(array(
-            'controller' => 'book',
-            'action' => 'download' ,
-            'id' => '12345',
-        ));
-        //$this->request->send_file($path,'test.chm');
+        */
+        $fileid = $_GET['file'];
+        if(!is_numeric($fileid)){
+            $this->request->response = __('no fileid.');
+        }
+        $file = new Upload_Book($fileid);
+        if($file->douban_id == $this->book_id){
+            $this->request->send_file($file->path,$this->client->infos()->title.'.'.$file->ext);
+        }
     }
+    
+    public function action_debug()
+    {
+        $book = new Upload_Book(4);
+        var_dump($book);
+        
+    }
+    
 }
 ?>

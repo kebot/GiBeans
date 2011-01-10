@@ -5,7 +5,7 @@ $environments = array(
         
     ),
     'production'     => array(
-        'baseurl' => '/',
+        'baseurl' => 'http://'.$_SERVER['SERVER_NAME'].'/kohana/',
     ),
 );
 

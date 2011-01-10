@@ -9,3 +9,4 @@ kohana_release
 nbproject
 *.komodoproject
 build
+application/upload/book/*
