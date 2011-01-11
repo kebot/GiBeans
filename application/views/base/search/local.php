@@ -1,14 +1,16 @@
 <div class="span-24">
     <div class="span-8">
-        <img src="<?php echo $book->link['largeimage'] ;?>" />
+        <a href="<?php echo $book->link['subject'] ;?>"><img height="250" width="170" src="<?php echo $book->link['largeimage'] ;?>" /></a>
     </div>
     <div class="span-16 last">
-        <h2><a href="#"><?php echo $book->title; ?></a></h2>
+        <h2><a href="<?php echo $book->link['subject'] ;?>"><?php echo $book->title; ?></a></h2>
+        <?php if(isset($file) && $file ): ?>
         <div class="span-16">
             <img class="span-2" src="<?php echo URL::base().'icons/'.$file->ext.'.png';?>" />
             <h5><?php echo substr($file->size/1024/1024,0,3);?> MB</h5>
             <h5><?php echo $file->download_count;?> 人下载</h5>
         </div>
+        <?php endif; ?>
         <hr>
         <div class="span-16">
             <h4><?php echo $book->author[0] ?>/ <?php echo Arr::get($book->attribute,'subtitle');?> / <?php echo Arr::get($book->attribute,'publisher');?> / <?php echo Arr::get($book->attribute,'pubdate');?> / <?php echo Arr::get($book->attribute,'price');?></h4>

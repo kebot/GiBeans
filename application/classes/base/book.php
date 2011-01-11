@@ -33,6 +33,7 @@ class Base_Book extends Douban_API_Book {
         if(!$this->cache->get($book_id)){
             $book = parent::get($book_id);
             $book->link['largeimage']=str_replace('spic','lpic',$book->link['image']);
+            $book->link['subject']=URL::site('book/subject/'.$book_id);
             $book->files = $this->_getFiles();
             if($book){
                 $this->cache->set($book_id, $book);

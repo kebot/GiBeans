@@ -30,16 +30,17 @@ class Controller_Book extends Controller_Template {
         $this->book_id = $this->request->param('id',NULL);
         if($this->book_id){
             $this->client = new Base_Book($this->book_id);
+        } else {
+            $this->client =  new Douban_API_Book();
         }
-        
-        
-        
+
         // template
-        $this->template->title = '精弘阅读';
+        $this->template->title = '';
         $this->template->header = View::factory('base/header')->render();
         $this->template->content = '';
         $this->template->footer = '';
         
+        //Cache::instance('book')->delete_all();
         
         
     }
@@ -77,9 +78,17 @@ class Controller_Book extends Controller_Template {
     {
         $limit = 10;
         $get = $_GET;
-        foreach (array('title','ext','order','direction','page') as $key){
+        foreach (array('title','ext','order','direction','page','type') as $key){
             $$key = Arr::get($get, $key);
         }
+        
+        if($type == 'all'){
+            $this->searchall($title, $page, $limit);
+            return;
+        }
+        
+        
+        
         $handle = DB::select()->from('books')->where('title', 'LIKE', '%'.$title.'%')->limit($limit);
         $ext AND $handle->and_where('ext', '=', $ext);
         
@@ -100,9 +109,25 @@ class Controller_Book extends Controller_Template {
             $this->template->content .= $view->render();
             $handle->next();
         }
-        
+        $this->template->title = '搜索'.$title.'的结果';
         
     }
+    
+    public function searchall($query,$index=1,$max=10)
+    {
+        $result = $this->client->search($query, $index, $max);
+        $this->template->title = $result->title;
+        foreach ($result->entry as  $book) {
+            $view = View::factory('base/search/local');
+            $book->link['subject'] = URL::site('book/subject/'.$book->id);
+            $book->link['largeimage']=str_replace('spic','lpic',$book->link['image']);
+            isset($book->attribute) OR $book->attribute = Array();
+            isset($book->author) OR $book->author = __('Unknow Author');
+            $view->book = $book;
+            $this->template->content .= $view->render();
+        }
+    }
+    
     
     public function action_subject()
     {
@@ -117,9 +142,7 @@ class Controller_Book extends Controller_Template {
         $upload = View::factory('base/upload')->bind('action',$upload_url)->bind('max_file_size',$max )->render();
         $this->template->content = View::factory('base/item')
                 ->render() . $upload;
-        
-        //@todo remove debug
-        //$this->client->removeCache();
+        $this->template->title = $book_info->title;
     }
 
     public function action_upload()
@@ -161,14 +184,13 @@ class Controller_Book extends Controller_Template {
             
             Cache::instance('book')->delete($this->book_id);
             
-            $this->request->response = $message;
+            $message .= HTML::anchor('book/subject/'.$this->book_id, __('return'));
+            $this->template->content = $message;
+            
         } else {
             $url = URL::site($this->request->uri);
             $max = 30000000;
-//            print $url;
-//            return;
-
-            $this->request->response = View::factory('base/upload')->bind('action',$url)->bind('max_file_size', $max)->render();
+            $this->template->content = View::factory('base/upload')->bind('action',$url)->bind('max_file_size', $max)->render();
         }
     }
 
@@ -191,6 +213,9 @@ class Controller_Book extends Controller_Template {
         }
     }
     
+        
+
+
     /**
      * @todo remove debug
      */

@@ -38,7 +38,7 @@ class Base_Tags
      * @param string $type 
      */
     public static function add($value,$type=NULL){
-        $values = array(NULL,$type,$value,NULL);
+        $values = array(NULL,$type,$value,0);
         $id = DB::insert('tags')->columns(self::$columns)->values($values)->execute('base');
         return $id[0];
     }
@@ -80,19 +80,13 @@ class Base_Tags
             $columns = array('d_id','t_id');
             $values = array($douban_id,  $this->id);
             $id = DB::insert($table, $columns)->values($values)->execute('base');
+            //Popular +1
+            DB::update('tags')->set(array('popular'=>DB::expr('popular+1')))->where('id', '=', $this->id)->execute('base');
             return $id;
         } else {
             return $select->get('id');
         }
-        
     }
-    
-    
-    
-    
-    
-    
-    
 }
 
 ?>

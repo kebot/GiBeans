@@ -160,6 +160,7 @@ class Upload_Book {
         $this->uid = $handle->get('owner');
         $this->size = $handle->get('size');
         $this->ext = $handle->get('ext');
+        $this->download_count = $handle->get('download_count');
         $this->download_url = URL::site('book/download/'.$this->douban_id).'?file='.$this->id;
     }
     /**

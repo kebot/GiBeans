@@ -3,7 +3,7 @@
 <html lang="en"> 
 	<head> 
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
-		<title>精弘阅读 &bull; <?php echo $title; ?></title> 
+		<title><?php echo $title; ?> &bull; 精弘阅读</title> 
                 <?php echo HTML::style('css/screen.css'); ?>
 		<style> 
 body {
