@@ -20,9 +20,9 @@ return array
              * Ports and sockets may be appended to the hostname.
              */
             'hostname' => 'localhost',
-            'database' => 'jhnav',
-            'username' => 'jhnav',
-            'password' => 'myzjutonjhnav',
+            'database' => 'book',
+            'username' => 'book',
+            'password' => '',
             'persistent' => FALSE,
         ),
         'table_prefix' => 'base_',

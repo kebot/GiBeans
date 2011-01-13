@@ -1,24 +1,12 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-$environments = array(
-    'development' => array(
-        'baseurl' => 'http://localhost/kohana/',
-        
-    ),
-    'production'     => array(
-        'baseurl' => 'http://'.$_SERVER['SERVER_NAME'].'/kohana/',
-    ),
-);
 
 if( $_SERVER['SERVER_NAME'] !== 'localhost')
 {
-    Kohana::$environment = 'production';
-    $environment = $environments['production'];
-} else 
+    $base_url = '/';
+} else
 {
-    $environment = $environments['development'];
+    $base_url = '/kohana';
 }
-
-unset ($environments);
 
 
 /**
@@ -69,7 +57,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-	'base_url'   => $environment['baseurl'],
+	'base_url'   => $base_url,
 ));
 
 /**

@@ -7,6 +7,7 @@
  * @author Kebot<i@yaofur.com>
  * @link http://kebot.me/
  */
+
 Upload::$default_directory = APPPATH . 'upload' . DIRECTORY_SEPARATOR . 'book';
 
 class Upload_Book {

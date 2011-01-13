@@ -117,6 +117,12 @@ class Controller_Book extends Controller_Template {
     {
         $result = $this->client->search($query, $index, $max);
         $this->template->title = $result->title;
+        
+        $this->template->content .= View::factory('base/search/pages')
+                ->bind('total', $result->total)
+                        ->bind('index', $result->index)
+                        ->render();
+        
         foreach ($result->entry as  $book) {
             $view = View::factory('base/search/local');
             $book->link['subject'] = URL::site('book/subject/'.$book->id);
