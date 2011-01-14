@@ -11,13 +11,23 @@
 Upload::$default_directory = APPPATH . 'upload' . DIRECTORY_SEPARATOR . 'book';
 
 class Upload_Book {
-
     /**
      * allowed file types.
      * @var array
      */
     protected static $allowed = array(
-        'txt', 'pdf', 'chm' 
+        'txt', 'pdf', 'chm' , 'zip' ,'rar'
+    );
+    
+    protected static $columns = array(
+        'title', 
+        'sha1', 
+        'owner', 
+        'time', 
+        'size', 
+        'douban_id', 
+        'ext',
+        'description',
     );
 
     /**
@@ -27,7 +37,7 @@ class Upload_Book {
      * @param int $uid
      * @return success the upload file; int -1 - file alread exists ; -2 - Wrong file type -3 Unknow Error
      */
-    public static function upload($files, $book_info, $uid) {
+    public static function upload($files, $book_info, $uid , $description = '') {
         // set the key for upload file array
         $file_key = 'book';
         
@@ -43,9 +53,9 @@ class Upload_Book {
                 }
                 $path = Upload::save($file, $filename);
                 // save in database
-                $columns = array('title', 'sha1', 'owner', 'time', 'size', 'douban_id', 'ext');
-                $values = array($book_info->title, $filename, $uid, DB::expr('NOW()'), $file['size'], $book_info->id, $ext);
-                $id = DB::insert('books', $columns)->values($values)->execute('base');
+                
+                $values = array($book_info->title, $filename, $uid, DB::expr('NOW()'), $file['size'], $book_info->id, $ext,$description);
+                $id = DB::insert('books', self::$columns)->values($values)->execute('base');
                 
                 if ($id) {
                     return $id;
@@ -127,6 +137,12 @@ class Upload_Book {
      * @var String
      */
     public $ext = NULL;
+    
+    /**
+     * @var String max 140 short describe for this file
+     */
+    public $description = '';
+    
     /**
      * @var int the user id for Ucenter
      */
@@ -161,8 +177,9 @@ class Upload_Book {
         $this->uid = $handle->get('owner');
         $this->size = $handle->get('size');
         $this->ext = $handle->get('ext');
+        $this->description = $handle->get('description');
         $this->download_count = $handle->get('download_count');
-        $this->download_url = URL::site('book/download/'.$this->douban_id).'?file='.$this->id;
+        $this->download_url = URL::site('book/download/'.$this->douban_id,TRUE).'?file='.$this->id;
     }
     /**
      *

@@ -24,7 +24,13 @@ h1 {
 	</head>
 	<body class="container">
 		<?php echo $header; ?>
+            <hr>
+                    <?php echo $pagination;?>
+            <hr>
                 <?php echo $content;?>
+            <hr>
+                    <?php echo $pagination;?>
+            <hr>
                 <?php echo $footer;?>
 	</body> 
 </html>

@@ -12,7 +12,6 @@ class Base_Tags
 
 
     /**
-     *
      * @param string $value
      * @param string $type
      * @return Base_Tags
@@ -42,6 +41,17 @@ class Base_Tags
         $id = DB::insert('tags')->columns(self::$columns)->values($values)->execute('base');
         return $id[0];
     }
+    
+    public static function popularTags($limit = 10)
+    {
+        $tags = array();
+        $handle = DB::select()->from('tags')->order_by('popular', 'DESC')->limit($limit)->execute('base');
+        if($handle->valid()){
+            $tags = $handle->as_array();
+        }
+        return $tags;
+    }
+    
     /**
      * @var int
      */

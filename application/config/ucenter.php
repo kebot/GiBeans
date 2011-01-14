@@ -1,9 +1,9 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 //ucenter配置
 define('UC_CONNECT', 'mysql');
-define('UC_DBHOST', '210.32.200.96');
-define('UC_DBUSER', 'center');
-define('UC_DBPW', '4uDsDFs3XRTFvifg');
+define('UC_DBHOST', 'localhost');
+define('UC_DBUSER', 'book');
+define('UC_DBPW', '');
 define('UC_DBNAME', 'center');
 define('UC_DBCHARSET', 'utf8'); 
 define('UC_DBTABLEPRE', '`center`.uc_');

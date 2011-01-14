@@ -12,8 +12,8 @@ class User_UC {
     protected $config;
     
     public function __construct() {
-        Kohana::find_file('uc_client', 'client');
         $this->config = Kohana::config('user');
+        include  Kohana::find_file('uc_client', 'client');
         $this->session = Session::instance('cookie');
         Cookie::$salt = $this->config->salt;
         if(!$this->uid){
@@ -31,12 +31,12 @@ class User_UC {
         if (!$lifetime) {
             $lifetime = $this->config->lifetime;
         }
-        list($uid, $username, $password, $email) = uc_login($username, $password);
+        list($uid, $username, $password, $email) = uc_user_login($username, $password);
         if ($uid > 0) {
             $this->username = $username;
             $this->uid = $uid;
             $this->setSession()->saveCookie();
-            uc_syn_login($uid);
+            uc_user_synlogin($uid);
         }
         return $uid;
     }
@@ -46,7 +46,7 @@ class User_UC {
         Cookie::delete($this->config->cookie_key);
         $this->uid = null;
         $this->username = null;
-        uc_syn_logout();
+        uc_user_synlogout();
     }
 
     /**
@@ -58,6 +58,11 @@ class User_UC {
         } else {
             return -1;
         }
+    }
+    
+    public function getUsername()
+    {
+        return $this->username;
     }
 
     /**

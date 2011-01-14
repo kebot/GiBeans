@@ -75,14 +75,14 @@ Kohana::$config->attach(new Kohana_Config_File);
  */
 Kohana::modules(array(
 	// 'auth'       => MODPATH.'auth',       // Basic authentication
-	   'cache'      => MODPATH.'cache',      // Caching with multiple backends
+        'cache'      => MODPATH.'cache',      // Caching with multiple backends
 	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
-	   'database'   => MODPATH.'database',   // Database access
-	   'douban'    => MODPATH.'douban',
+        'database'   => MODPATH.'database',   // Database access
+        'douban'     => MODPATH.'douban',
 	// 'image'      => MODPATH.'image',      // Image manipulation
 	//   'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'oauth'      => MODPATH.'oauth',      // OAuth authentication
-	// 'pagination' => MODPATH.'pagination', // Paging of results
+ 	'pagination' => MODPATH.'pagination', // Paging of results 分页
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
 	//   'userguide'  => MODPATH.'userguide',  // User guide and API documentation
         //   'shindig'   => MODPATH.'shindig',    // Shindig Blogging
