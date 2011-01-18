@@ -22,7 +22,11 @@ class Controller_Book extends Controller_Template {
 
     public function before() {
         parent::before();
-
+        
+        // set the default language
+        //@todo will support other language
+        Kohana_I18n::lang('zh-cn');
+        
         $this->user = new User();
         // @todo debug
         $this->book_id = $this->request->param('id', NULL);
@@ -67,7 +71,7 @@ class Controller_Book extends Controller_Template {
         $this->template->content = View::factory('base/index', $data)
                         ->render();
 
-        $this->template->title = '首页';
+        $this->template->title = __('index');
         
     }
 
@@ -138,7 +142,7 @@ class Controller_Book extends Controller_Template {
             $page AND $handle->offset($limit * ($page - 1));
             $handle = $handle->execute('base');
 
-            $this->template->title = '搜索' . $title . '的结果';
+            $this->template->title = __('search') . $title . 'result';
 
             $total = $handle->count();
 
@@ -153,7 +157,7 @@ class Controller_Book extends Controller_Template {
             }
             if ($total == 0) {
                 $get['type'] = 'all';
-                $this->template->content = __('没有找到可下载的资源') . HTML::anchor(URL::site('book/search', TRUE) . URL::query($get), __('如需上传请搜索书籍信息数据库'));
+                $this->template->content = __('no result for download') . HTML::anchor(URL::site('book/search', TRUE) . URL::query($get), __('search for upload'));
             }
         }
 
@@ -195,7 +199,7 @@ class Controller_Book extends Controller_Template {
         $uid = $this->user->getUid();
         
         if ($uid <= 0) {
-                $this->template->content = "请登陆后再上传文件";
+                $this->template->content = 'please login first';
                 return;
         }
 
@@ -256,7 +260,7 @@ class Controller_Book extends Controller_Template {
     public function action_login()
     {
         if($this->user->isLogin()){
-            $this->template->content = '您已经登陆';
+            $this->template->content = __('alread login');
             return;
         }
         
@@ -270,18 +274,18 @@ class Controller_Book extends Controller_Template {
             
             switch ($statu) {
             case -1:
-                $message = "用户不存在，或者被删除!";
+                $message = __('user not exist');
                 break;
             case -2:
-                $message = "密码错!";
+                $message = __('wrong password');
                 break;
             case -3:
-                $message = "安全提问错!";
+                $message = __('wrong security question');
                 break;
             case -4:
-                $message = '错误的用户名/密码格式';
+                $message = __('wrong username/password format');
             default :
-                $message = "未知错误!";
+                $message = __('Unknow Error');
                 break;
             }
             
@@ -304,7 +308,7 @@ class Controller_Book extends Controller_Template {
      * @todo remove debug
      */
     public function action_debug() {
-        print $this->user->login('听临', '170587364');
+        Kohana_I18n::lang('zh-cn');
     }
 
 }
