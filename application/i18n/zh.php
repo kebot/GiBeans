@@ -8,19 +8,20 @@ return array
     'author-intro'=> '作者简介',
     'publisher' => '出版社',
     'binding' => '装帧',
-    'pubdate' => '出版年',
+    'pubdate' => '出版日期',
     'title' =>  '标题',
+    'pages'=>'页数',
+    'price'=>'价格',
     
     'index'=>'首页',
     
     'search'=>'搜索',
     'result'=>'结果',
-    
-    
     // search
     'no result for download'=>'没有找到可下载的资源',
     'search for upload'=>'如需上传请搜索书籍信息数据库',
     'please login first'=>'请先登陆',
+    'no result found' => '没有结果',
     
     // upload
     'File Exists'=>'相同的文件已经存在',

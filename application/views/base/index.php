@@ -21,7 +21,7 @@
     <h2>热门标签:</h2>
     <?php
     foreach ($tags as $tag):
-        echo $tag['value'];
+        echo HTML::anchor('book/tag/'.$tag['id'],$tag['value']);
         echo $tag['popular'];
         echo '<br>';
     endforeach; ?>

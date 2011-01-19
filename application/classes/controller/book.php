@@ -30,11 +30,8 @@ class Controller_Book extends Controller_Template {
         $this->user = new User();
         // @todo debug
         $this->book_id = $this->request->param('id', NULL);
-        if ($this->book_id) {
-            $this->client = new Base_Book($this->book_id);
-        } else {
-            $this->client = new Douban_API_Book();
-        }
+        $this->client = new Base_Book($this->book_id);
+        
         
         // template
         $this->template->title = '';
@@ -107,7 +104,7 @@ class Controller_Book extends Controller_Template {
 
         // Variable for pagination
         $total = 0;
-
+ 
         // get the get query
         $get = $_GET;
         foreach (array('title', 'ext', 'order', 'direction', 'page', 'type') as $key) {
@@ -125,10 +122,6 @@ class Controller_Book extends Controller_Template {
             if ($total) {
                 foreach ($result->entry as $book) {
                     $view = View::factory('base/search/local');
-                    $book->link['subject'] = URL::site('book/subject/' . $book->id);
-                    $book->link['largeimage'] = str_replace('spic', 'lpic', $book->link['image']);
-                    isset($book->attribute) OR $book->attribute = Array();
-                    isset($book->author) OR $book->author = __('Unknow Author');
                     $view->book = $book;
                     $this->template->content .= $view->render();
                 }
@@ -174,8 +167,25 @@ class Controller_Book extends Controller_Template {
         $this->template->pagination = $pagination->render();
     }
     
+    
+    // Single tag
     public function action_tag() {
+        // the tag id
+        $id = $this->request->param('id', NULL);
         
+        $items = DB::select('d_id')->from('relationship')->where('t_id', '=', $id)->execute('base')->as_array();
+        if($items){
+            
+            foreach($items as $id){
+                $id = $id['d_id'];
+                $view = View::factory('base/search/local');
+                $view->file = NULL;
+                $view->book = Base_Book::factory($id)->infos();
+                $this->template->content .= $view->render();
+            }
+        } else {
+            $this->template->content = __('no result found');
+        }
     }
 
 
