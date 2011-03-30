@@ -8,7 +8,8 @@
 		<style> 
 body {
 	padding: 100px 0 0 0;
-	background: #dfe1e3;
+/*	background: #dfe1e3;*/
+        background: #b4a677;
 	text-shadow: 0 1px 2px #fdfdfd;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	color: #363a4f;

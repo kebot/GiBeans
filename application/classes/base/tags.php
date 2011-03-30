@@ -8,9 +8,7 @@
 class Base_Tags
 {
     public static $columns = array('id','type','value','popular');
-
-
-
+    
     /**
      * @param string $value
      * @param string $type

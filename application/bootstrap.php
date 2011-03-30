@@ -5,7 +5,7 @@ if( $_SERVER['SERVER_NAME'] !== 'localhost')
     $base_url = '/';
 } else
 {
-    $base_url = '/kohana';
+    $base_url = '/book';
 }
 
 

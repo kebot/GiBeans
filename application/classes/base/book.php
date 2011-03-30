@@ -92,7 +92,25 @@ class Base_Book extends Douban_API_Book {
         
         return $book;
     }
-
+    
+    
+    /*
+     * @param number $isbn
+     * @return library link
+     */
+    public static function find_in_library($isbn){
+        $action = 'http://210.32.205.60/bmls.php';
+        $data = array(
+            'T1'=>1,
+            'T2'=>1,
+            'T3'=>4,
+            'T4'=>25,
+            'T5'=>$isbn            
+        );
+        
+        $response = Douban_Request::post($action, $data);
+        print $response->to_normal();
+    }
 }
 
 ?>

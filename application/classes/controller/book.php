@@ -47,16 +47,16 @@ class Controller_Book extends Controller_Template {
         $handle = DB::select()
                         ->from('books')
                         ->order_by('time', 'DESC')
-                        ->limit(9)
+                        ->limit(12)
                         ->execute('base');
-        $newcoming = $this->view_list($handle);
+        $newcoming = $this->view_list($handle , 6);
 
         $handle = DB::select()
                         ->from('books')
                         ->order_by('download_count', 'DESC')
-                        ->limit(9)
+                        ->limit(12)
                         ->execute('base');
-        $hotdownload = $this->view_list($handle);
+        $hotdownload = $this->view_list($handle , 6);
 
 
         $data = array(
@@ -77,11 +77,11 @@ class Controller_Book extends Controller_Template {
      * @param Database_Result $handle
      * @return type 
      */
-    public function view_list($handle) {
+    public function view_list($handle , $maxPreLine=3) {
         $view = '';
         $flug = 1;
         while ($handle->valid()) {
-            if($flug == 3){
+            if($flug == $maxPreLine){
                 $flug = 1;
                 $last = TRUE;
             } else {
@@ -318,7 +318,9 @@ class Controller_Book extends Controller_Template {
      * @todo remove debug
      */
     public function action_debug() {
-        Kohana_I18n::lang('zh-cn');
+        //Kohana_I18n::lang('zh-cn');
+        $isbn = '9787508608686';
+        Base_Book::find_in_library('9787508608686');
     }
 
 }
