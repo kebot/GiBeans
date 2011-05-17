@@ -17,4 +17,10 @@ It uses Douban's book database.
 # This project is based on
 # Kohana PHP Framework, version 3.0 (release)
 
+<<<<<<< HEAD
 See more at [Kohana](http://kohanaframework.org/).
+=======
+This is the current release version of [Kohana](http://kohanaframework.org/).
+
+test
+>>>>>>> 3c1703301db5b9f3aca8bda184cd72be4bc9f9af
