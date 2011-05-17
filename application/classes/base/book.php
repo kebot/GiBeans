@@ -1,6 +1,4 @@
-<?php
-
-defined('SYSPATH') or die('No direct script access.');
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Base_Book extends Douban_API_Book {
     
@@ -99,6 +97,9 @@ class Base_Book extends Douban_API_Book {
      * @return library link
      */
     public static function find_in_library($isbn){
+        
+        //print $isbn;
+        
         $action = 'http://210.32.205.60/bmls.php';
         $data = array(
             'T1'=>1,
@@ -107,9 +108,27 @@ class Base_Book extends Douban_API_Book {
             'T4'=>25,
             'T5'=>$isbn            
         );
-        
         $response = Douban_Request::post($action, $data);
-        print $response->to_normal();
+        $pattern = '/<a href=\'(ml1-1.php.+?)\'>(.+?)<\/a>/';//"<a href=\"ml1-1.php\?.*\">.*</a>";
+        
+        $subject = $response->to_normal();
+        
+//        print $subject;
+        
+        if( ! preg_match_all($pattern, $subject, $matchesarray) )
+        {
+            return array();
+        }
+        
+        //var_dump($matchesarray);
+        
+        $links = $matchesarray[1];
+        
+        foreach($links as $key => $object){
+            $link = iconv("gb2312", "UTF-8", $object);
+            $links[$key] = 'http://210.32.205.60/'.$link;
+        }
+        return $links;
     }
 }
 

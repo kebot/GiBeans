@@ -3,3 +3,4 @@
  */
  .book-shelf{background-image: url('book-background.jpg') ;height:300px;}
  .book-shelf .span-4{height: 160px ;}
+ .book-shelf img{height: 100px;}

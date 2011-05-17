@@ -1,6 +1,4 @@
-<?php
-
-defined('SYSPATH') or die('No direct script access.');
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Book extends Controller_Template {
 
@@ -189,7 +187,8 @@ class Controller_Book extends Controller_Template {
     }
 
 
-    public function action_subject() {
+    public function action_subject() 
+    {
         $max = 30000000;
         $book_info = $this->client->infos();
         $upload_url = URL::site('book/upload/' . $this->book_id, true);
@@ -200,6 +199,15 @@ class Controller_Book extends Controller_Template {
         $this->template->content = View::factory('base/item')
                         ->render();
         $this->template->title = $book_info->title;
+        
+        //print_r($book_info);
+        
+        $library_links = Base_Book::find_in_library($book_info->attribute['isbn13']);
+        
+        if(count($library_links)){
+            print '<h1>'.HTML::anchor($library_links[0],"Library Link").'</h1>';
+        }
+        
     }
 
     public function action_upload() {
@@ -321,6 +329,7 @@ class Controller_Book extends Controller_Template {
         //Kohana_I18n::lang('zh-cn');
         $isbn = '9787508608686';
         Base_Book::find_in_library('9787508608686');
+        
     }
 
 }
